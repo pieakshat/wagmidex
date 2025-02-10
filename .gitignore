@@ -1,0 +1,48 @@
+# Node.js dependencies
+node_modules/
+package-lock.json
+
+# Hardhat build artifacts
+artifacts/
+cache/
+typechain-types/
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+.DS_Store
+
+# Hardhat Test Coverage Reports
+coverage/
+coverage.json
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# VS Code settings
+.vscode/
+
+# MacOS system files
+.DS_Store
+
+# Ignore compiled TypeScript files if present
+dist/
+out/
+
+# Ignore wagmi-projects node_modules if it exists
+wagmi-projects/node_modules/
+
+# Ignore wagmi-projects .git if it was accidentally initialized
+wagmi-projects/.git
+
+# Ignore Solidity compile outputs
+*.sol.json
+
+# Ignore IPFS or off-chain storage uploads if used
+.ipfs/
