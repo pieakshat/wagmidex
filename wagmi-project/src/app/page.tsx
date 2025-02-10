@@ -2,6 +2,8 @@
 
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
 
+export const DEX_ADDRESS = "0x7359ea4f7945F31944670746DF3369Da500D0733";
+
 function App() {
   const account = useAccount()
   const { connectors, connect, status, error } = useConnect()

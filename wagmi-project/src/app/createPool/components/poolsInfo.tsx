@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { formatEther } from "viem";
 import { useReadContract } from "wagmi";
 import DexABI from "../abis/dex.json";
-import { DEX_ADDRESS } from "../page";
+import { DEX_ADDRESS } from "@/app/page";
 
 // const DEX_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 

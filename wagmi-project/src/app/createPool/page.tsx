@@ -4,8 +4,9 @@ import { parseEther, formatEther } from "viem";
 import { useAccount, useWriteContract, useReadContract } from "wagmi";
 import TokenABI from "./abis/token.json";
 import DexABI from "./abis/dex.json";
+import { DEX_ADDRESS } from "../page";
 
-export const DEX_ADDRESS = "0x7359ea4f7945F31944670746DF3369Da500D0733";
+// export const DEX_ADDRESS = "0x7359ea4f7945F31944670746DF3369Da500D0733";
 
 interface PoolInfo {
     price: bigint;

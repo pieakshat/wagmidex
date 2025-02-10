@@ -1,0 +1,354 @@
+[
+    {
+        "inputs": [],
+        "name": "InsufficientEthLiquidity",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "InsufficientTokenLiquidity",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "InvalidTokenAddress",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "poolAlreadyExists",
+        "type": "error"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "tokenAddress",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "ethIn",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "tokensOut",
+                "type": "uint256"
+            }
+        ],
+        "name": "EthToTokenSwap",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "tokenAddress",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "ethAmount",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "tokenAmount",
+                "type": "uint256"
+            }
+        ],
+        "name": "PoolCreated",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "tokenAddress",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "tokensIn",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "ethOut",
+                "type": "uint256"
+            }
+        ],
+        "name": "TokenToEthSwap",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "tokenIn",
+                "type": "address"
+            },
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "tokenOut",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "tokensIn",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "tokensOut",
+                "type": "uint256"
+            }
+        ],
+        "name": "TokenToTokenSwap",
+        "type": "event"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "contract IERC20",
+                "name": "_tokenAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_tokenReserve",
+                "type": "uint256"
+            }
+        ],
+        "name": "createPool",
+        "outputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "uint256",
+                        "name": "price",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "ethReserve",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "tokenReserve",
+                        "type": "uint256"
+                    }
+                ],
+                "internalType": "struct Dex.Pool",
+                "name": "",
+                "type": "tuple"
+            }
+        ],
+        "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "contract IERC20",
+                "name": "_tokenAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "minTokensOut",
+                "type": "uint256"
+            }
+        ],
+        "name": "ethToTokenSwap",
+        "outputs": [],
+        "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getAllPoolsInfo",
+        "outputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "uint256",
+                        "name": "price",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "ethReserve",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "tokenReserve",
+                        "type": "uint256"
+                    }
+                ],
+                "internalType": "struct Dex.Pool[]",
+                "name": "",
+                "type": "tuple[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "contract IERC20",
+                "name": "_tokenAddress",
+                "type": "address"
+            }
+        ],
+        "name": "getPrice",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "name": "poolAddresses",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "name": "poolExists",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "name": "poolInfo",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "price",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "ethReserve",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "tokenReserve",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "contract IERC20",
+                "name": "_tokenAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_tokenSent",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "minEthOut",
+                "type": "uint256"
+            }
+        ],
+        "name": "tokenToEthSwap",
+        "outputs": [],
+        "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "contract IERC20",
+                "name": "_tokenIn",
+                "type": "address"
+            },
+            {
+                "internalType": "contract IERC20",
+                "name": "_tokenOut",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_tokenInAmount",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "minTokensOut",
+                "type": "uint256"
+            }
+        ],
+        "name": "tokenToTokenSwap",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    }
+]
