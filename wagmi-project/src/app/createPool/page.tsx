@@ -2,13 +2,14 @@
 import { Key, useEffect, useState } from "react";
 import { parseEther, formatEther } from "viem";
 import { useAccount, useWriteContract, useReadContract } from "wagmi";
-import TokenABI from "./abis/token.json";
-import DexABI from "./abis/dex.json";
+import TokenABI from "../../abis/token.json";
+import DexABI from "../../abis/dex.json";
 import { DEX_ADDRESS } from "../page";
 
 // export const DEX_ADDRESS = "0x7359ea4f7945F31944670746DF3369Da500D0733";
 
 interface PoolInfo {
+    poolAddress: string;
     price: bigint;
     ethReserve: bigint;
     tokenReserve: bigint;
@@ -34,7 +35,7 @@ function CreatePool() {
 
     useEffect(() => {
         console.log("data: ", pools);
-    }, [])
+    }, [pools])
 
     const handleCreatePool = async () => {
         if (!isConnected || !tokenAddress || !tokenReserve || !ethAmount) {
@@ -97,8 +98,9 @@ function CreatePool() {
 
             <h2>Available Pools</h2>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
-                {pools?.map((pool: { price: bigint; ethReserve: bigint; tokenReserve: bigint; }, index: Key | null | undefined) => (
+                {pools?.map((pool: { poolAddress: string; price: bigint; ethReserve: bigint; tokenReserve: bigint; }, index: Key | null | undefined) => (
                     <div key={index} style={{ border: "1px solid #ccc", padding: "10px", borderRadius: "8px", width: "200px" }}>
+                        <p><strong>pool address:</strong> {pool.poolAddress}</p>
                         <p><strong>Token Price:</strong> {formatEther(pool.price)} ETH</p>
                         <p><strong>ETH Reserve:</strong> {formatEther(pool.ethReserve)}</p>
                         <p><strong>Token Reserve:</strong> {formatEther(pool.tokenReserve)}</p>

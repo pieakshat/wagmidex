@@ -2,9 +2,9 @@
 
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
 
-export const DEX_ADDRESS = "0x7359ea4f7945F31944670746DF3369Da500D0733";
-export const ALICE_TOKEN_ADDRESS = "0xaF79D44FC4196B7879829f1cF9867E9569b2A5e2"
-export const BOB_TOKEN_ADDRESS = "0x082624a2345d8dc4B91d3F23bdd7c1bf06f7268B"
+export const DEX_ADDRESS = "0x80504fb095c623f0d33FE246c9D5f0c7Df6f1807";
+export const ALICE_TOKEN_ADDRESS = "0x501d826490c6E34Abf4cde1Ac6E1091FdA8A8Cce"
+export const BOB_TOKEN_ADDRESS = "0x15B956FA3948C9e0ac232d917CdB6F4BcDbd1dF1"
 
 function App() {
   const account = useAccount()

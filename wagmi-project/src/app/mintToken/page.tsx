@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { useAccount, useWriteContract } from "wagmi";
-import MintTokenAbi from '../../abis/mint.json';
+import MintTokenAbi from '../../abis/token.json';
+import { ALICE_TOKEN_ADDRESS, BOB_TOKEN_ADDRESS } from "../page";
 
-const ALICE_TOKEN_ADDRESS = "0x501d826490c6E34Abf4cde1Ac6E1091FdA8A8Cce";
-const BOB_TOKEN_ADDRESS = "0x15B956FA3948C9e0ac232d917CdB6F4BcDbd1dF1";
+// const ALICE_TOKEN_ADDRESS = "0x501d826490c6E34Abf4cde1Ac6E1091FdA8A8Cce";
+// const BOB_TOKEN_ADDRESS = "0x15B956FA3948C9e0ac232d917CdB6F4BcDbd1dF1";
 
 const MintToken = () => {
     const { address, isConnected } = useAccount();

@@ -25,6 +25,7 @@ contract Dex {
     }
 
     struct Pool {
+        address poolAddress; // address of the pool same as the token address of tok/eth pair
         uint price;
         uint ethReserve;
         uint tokenReserve;
@@ -55,6 +56,7 @@ contract Dex {
         uint256 _price = (msg.value * PRECISION) / _tokenReserve;
         
         poolInfo[address(_tokenAddress)] = Pool({
+            poolAddress: address(_tokenAddress), 
             price: _price,
             ethReserve: msg.value,
             tokenReserve: _tokenReserve

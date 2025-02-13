@@ -143,6 +143,11 @@
             {
                 "components": [
                     {
+                        "internalType": "address",
+                        "name": "poolAddress",
+                        "type": "address"
+                    },
+                    {
                         "internalType": "uint256",
                         "name": "price",
                         "type": "uint256"
@@ -190,6 +195,11 @@
         "outputs": [
             {
                 "components": [
+                    {
+                        "internalType": "address",
+                        "name": "poolAddress",
+                        "type": "address"
+                    },
                     {
                         "internalType": "uint256",
                         "name": "price",
@@ -281,6 +291,11 @@
         ],
         "name": "poolInfo",
         "outputs": [
+            {
+                "internalType": "address",
+                "name": "poolAddress",
+                "type": "address"
+            },
             {
                 "internalType": "uint256",
                 "name": "price",
