@@ -4,20 +4,36 @@ import { parseEther, formatEther } from "viem";
 import { useAccount, useWriteContract, useReadContract } from "wagmi";
 import TokenAbi from '../../abis/token.json';
 import DexAbi from '../../abis/dex.json';
-import { DEX_ADDRESS } from "../page";
+import { DEX_ADDRESS, ALICE_TOKEN_ADDRESS, BOB_TOKEN_ADDRESS } from "../page";
+// import styles from './styles/SwapInterface.module.css'
+import { Settings, ArrowDown, ChevronDown } from 'lucide-react';
+
+// Token options type
+type Token = {
+    symbol: string;
+    address: `0x${string}` | "ETH";
+    icon?: string;
+};
 
 const SwapInterface = () => {
     const { address, isConnected } = useAccount();
     const { writeContractAsync } = useWriteContract();
 
-    // State for input tokens and amounts
-    const [token1Address, setToken1Address] = useState<`0x${string}`>("0x");
-    const [token2Address, setToken2Address] = useState<`0x${string}`>("0x");
+    // Available tokens
+    const tokens: Token[] = [
+        { symbol: "ETH", address: "ETH", icon: "🔷" },
+        { symbol: "ALICE", address: ALICE_TOKEN_ADDRESS },
+        { symbol: "BOB", address: BOB_TOKEN_ADDRESS }
+    ];
+
+    // State
+    const [selectedToken1, setSelectedToken1] = useState<Token>(tokens[0]);
+    const [selectedToken2, setSelectedToken2] = useState<Token>(tokens[1]);
     const [amount1, setAmount1] = useState("");
     const [amount2, setAmount2] = useState("");
-    const [isToken1Native, setIsToken1Native] = useState(false);
-    const [isToken2Native, setIsToken2Native] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [showTokenList1, setShowTokenList1] = useState(false);
+    const [showTokenList2, setShowTokenList2] = useState(false);
 
     // Function to handle token swaps
     const handleSwap = async () => {
@@ -31,20 +47,20 @@ const SwapInterface = () => {
             const parsedAmount = parseEther(amount1);
 
             // ETH to Token swap
-            if (isToken1Native && !isToken2Native) {
+            if (selectedToken1.address === "ETH" && selectedToken2.address !== "ETH") {
                 await writeContractAsync({
                     address: DEX_ADDRESS,
                     abi: DexAbi,
                     functionName: 'ethToTokenSwap',
-                    args: [token2Address, 0], // minTokensOut set to 0 for demo
+                    args: [selectedToken2.address, 0], // minTokensOut set to 0 for demo
                     value: parsedAmount
                 });
             }
             // Token to ETH swap
-            else if (!isToken1Native && isToken2Native) {
+            else if (selectedToken1.address !== "ETH" && selectedToken2.address === "ETH") {
                 // First approve DEX to spend tokens
                 await writeContractAsync({
-                    address: token1Address,
+                    address: selectedToken1.address,
                     abi: TokenAbi,
                     functionName: 'approve',
                     args: [DEX_ADDRESS, parsedAmount]
@@ -54,14 +70,14 @@ const SwapInterface = () => {
                     address: DEX_ADDRESS,
                     abi: DexAbi,
                     functionName: 'tokenToEthSwap',
-                    args: [token1Address, parsedAmount, 0] // minEthOut set to 0 for demo
+                    args: [selectedToken1.address, parsedAmount, 0] // minEthOut set to 0 for demo
                 });
             }
             // Token to Token swap
-            else if (!isToken1Native && !isToken2Native) {
+            else if (selectedToken1.address !== "ETH" && selectedToken2.address !== "ETH") {
                 // First approve DEX to spend tokens
                 await writeContractAsync({
-                    address: token1Address,
+                    address: selectedToken1.address,
                     abi: TokenAbi,
                     functionName: 'approve',
                     args: [DEX_ADDRESS, parsedAmount]
@@ -71,7 +87,7 @@ const SwapInterface = () => {
                     address: DEX_ADDRESS,
                     abi: DexAbi,
                     functionName: 'tokenToTokenSwap',
-                    args: [token1Address, token2Address, parsedAmount, 0] // minTokensOut set to 0 for demo
+                    args: [selectedToken1.address, selectedToken2.address, parsedAmount, 0] // minTokensOut set to 0 for demo
                 });
             }
         } catch (error) {
@@ -82,92 +98,127 @@ const SwapInterface = () => {
         }
     };
 
-    return (
-        <div className="w-full max-w-md mx-auto p-6 bg-white rounded-xl shadow-lg">
-            <div className="space-y-4">
-                {/* First Token Input */}
-                <div className="p-4 bg-gray-50 rounded-lg">
-                    <div className="flex items-center justify-between mb-2">
-                        <input
-                            type="number"
-                            value={amount1}
-                            onChange={(e) => setAmount1(e.target.value)}
-                            placeholder="0.0"
-                            className="w-2/3 bg-transparent text-2xl outline-none"
-                        />
-                        <div className="flex items-center space-x-2">
-                            <input
-                                type="text"
-                                value={token1Address}
-                                onChange={(e) => setToken1Address(e.target.value)}
-                                placeholder="Token Address"
-                                className="w-32 px-2 py-1 text-sm border rounded"
-                                disabled={isToken1Native}
-                            />
-                            <button
-                                onClick={() => setIsToken1Native(!isToken1Native)}
-                                className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
-                            >
-                                {isToken1Native ? "ETH" : "ERC20"}
-                            </button>
-                        </div>
-                    </div>
+    // Token selection dropdown component
+    const TokenDropdown = ({ tokens, selectedToken, onSelect, show, setShow }: any) => (
+        <div className="relative">
+            <button
+                onClick={() => setShow(!show)}
+                className="flex items-center gap-2 px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700"
+            >
+                {selectedToken.icon && <span>{selectedToken.icon}</span>}
+                <span>{selectedToken.symbol}</span>
+                <ChevronDown size={16} />
+            </button>
+            {show && (
+                <div className="absolute top-full mt-2 w-full bg-gray-800 rounded-lg shadow-lg z-10">
+                    {tokens.map((token: Token) => (
+                        <button
+                            key={token.address}
+                            className="w-full px-4 py-2 text-left hover:bg-gray-700 first:rounded-t-lg last:rounded-b-lg flex items-center gap-2"
+                            onClick={() => {
+                                onSelect(token);
+                                setShow(false);
+                            }}
+                        >
+                            {token.icon && <span>{token.icon}</span>}
+                            {token.symbol}
+                        </button>
+                    ))}
                 </div>
+            )}
+        </div>
+    );
 
-                {/* Swap Direction Arrow */}
-                <div className="flex justify-center">
-                    <button
-                        onClick={() => {
-                            setToken1Address(token2Address);
-                            setToken2Address(token1Address);
-                            setAmount1(amount2);
-                            setAmount2(amount1);
-                            setIsToken1Native(isToken2Native);
-                            setIsToken2Native(isToken1Native);
-                        }}
-                        className="p-2 rounded-full bg-gray-100 hover:bg-gray-200"
-                    >
-                        ↓
+    return (
+        <div className="min-h-screen bg-gray-900 text-white p-4">
+            <nav className="flex justify-between items-center mb-8">
+                <div className="text-xl font-bold">Swap</div>
+                <button className="px-4 py-2 bg-blue-600 rounded-lg hover:bg-blue-700">
+                    {isConnected ? `${address?.slice(0, 6)}...${address?.slice(-4)}` : "Connect Wallet"}
+                </button>
+            </nav>
+
+            <div className="max-w-md mx-auto bg-gray-800 rounded-2xl p-4">
+                <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-xl font-bold">Swap</h2>
+                    <button className="p-2 hover:bg-gray-700 rounded-lg">
+                        <Settings size={20} />
                     </button>
                 </div>
 
-                {/* Second Token Input */}
-                <div className="p-4 bg-gray-50 rounded-lg">
-                    <div className="flex items-center justify-between mb-2">
-                        <input
-                            type="number"
-                            value={amount2}
-                            onChange={(e) => setAmount2(e.target.value)}
-                            placeholder="0.0"
-                            className="w-2/3 bg-transparent text-2xl outline-none"
-                        />
-                        <div className="flex items-center space-x-2">
+                <div className="space-y-4">
+                    {/* First Token Section */}
+                    <div className="space-y-2">
+                        <div className="flex justify-between text-sm text-gray-400">
+                            <span>You pay</span>
+                            <span>Balance: 0.0</span>
+                        </div>
+                        <div className="flex items-center gap-4 bg-gray-700 p-4 rounded-lg">
                             <input
-                                type="text"
-                                value={token2Address}
-                                onChange={(e) => setToken2Address(e.target.value)}
-                                placeholder="Token Address"
-                                className="w-32 px-2 py-1 text-sm border rounded"
-                                disabled={isToken2Native}
+                                type="number"
+                                value={amount1}
+                                onChange={(e) => setAmount1(e.target.value)}
+                                placeholder="0"
+                                className="bg-transparent w-full focus:outline-none"
                             />
-                            <button
-                                onClick={() => setIsToken2Native(!isToken2Native)}
-                                className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
-                            >
-                                {isToken2Native ? "ETH" : "ERC20"}
-                            </button>
+                            <TokenDropdown
+                                tokens={tokens}
+                                selectedToken={selectedToken1}
+                                onSelect={setSelectedToken1}
+                                show={showTokenList1}
+                                setShow={setShowTokenList1}
+                            />
                         </div>
                     </div>
-                </div>
 
-                {/* Swap Button */}
-                <button
-                    onClick={handleSwap}
-                    disabled={!isConnected || isLoading}
-                    className="w-full py-3 text-lg font-semibold text-white bg-blue-500 rounded-lg hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
-                >
-                    {isLoading ? "Swapping..." : isConnected ? "Swap" : "Connect Wallet"}
-                </button>
+                    {/* Swap Direction Button */}
+                    <div className="flex justify-center">
+                        <button
+                            className="p-2 bg-gray-700 rounded-full hover:bg-gray-600"
+                            onClick={() => {
+                                const temp = selectedToken1;
+                                setSelectedToken1(selectedToken2);
+                                setSelectedToken2(temp);
+                                setAmount1(amount2);
+                                setAmount2(amount1);
+                            }}
+                        >
+                            <ArrowDown size={20} />
+                        </button>
+                    </div>
+
+                    {/* Second Token Section */}
+                    <div className="space-y-2">
+                        <div className="flex justify-between text-sm text-gray-400">
+                            <span>You receive</span>
+                            <span>Balance: 0.0</span>
+                        </div>
+                        <div className="flex items-center gap-4 bg-gray-700 p-4 rounded-lg">
+                            <input
+                                type="number"
+                                value={amount2}
+                                onChange={(e) => setAmount2(e.target.value)}
+                                placeholder="0"
+                                className="bg-transparent w-full focus:outline-none"
+                            />
+                            <TokenDropdown
+                                tokens={tokens}
+                                selectedToken={selectedToken2}
+                                onSelect={setSelectedToken2}
+                                show={showTokenList2}
+                                setShow={setShowTokenList2}
+                            />
+                        </div>
+                    </div>
+
+                    <button
+                        onClick={handleSwap}
+                        disabled={!isConnected || isLoading}
+                        className="w-full py-4 bg-blue-600 rounded-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-700"
+                    >
+                        {isLoading ? "Swapping..." : !isConnected ? "Connect Wallet" : "Swap"}
+                    </button>
+                </div>
             </div>
         </div>
     );
