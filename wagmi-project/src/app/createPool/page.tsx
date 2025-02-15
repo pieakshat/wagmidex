@@ -1,12 +1,17 @@
 "use client";
+
 import { Key, useEffect, useState } from "react";
 import { parseEther, formatEther } from "viem";
 import { useAccount, useWriteContract, useReadContract } from "wagmi";
 import TokenABI from "../../abis/token.json";
 import DexABI from "../../abis/dex.json";
 import { DEX_ADDRESS } from "../page";
-
-// export const DEX_ADDRESS = "0x7359ea4f7945F31944670746DF3369Da500D0733";
+import { Navbar } from "../components/navbar";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { InfoIcon } from "lucide-react";
 
 interface PoolInfo {
     poolAddress: string;
@@ -16,7 +21,6 @@ interface PoolInfo {
 }
 
 function CreatePool() {
-
     const { address, isConnected } = useAccount();
     const { writeContractAsync } = useWriteContract();
     const { data: pools, refetch } = useReadContract({
@@ -24,9 +28,10 @@ function CreatePool() {
         abi: DexABI,
         functionName: "getAllPoolsInfo",
         query: {
-            select: (data) => data as PoolInfo[], // Cast the data to PoolInfo[]
+            select: (data) => data as PoolInfo[],
         },
     });
+
     const [tokenAddress, setTokenAddress] = useState<`0x${string}`>("0x");
     const [tokenReserve, setTokenReserve] = useState("");
     const [ethAmount, setEthAmount] = useState("");
@@ -35,7 +40,7 @@ function CreatePool() {
 
     useEffect(() => {
         console.log("data: ", pools);
-    }, [pools])
+    }, [pools]);
 
     const handleCreatePool = async () => {
         if (!isConnected || !tokenAddress || !tokenReserve || !ethAmount) {
@@ -51,7 +56,6 @@ function CreatePool() {
                 functionName: "approve",
                 args: [DEX_ADDRESS, parseEther(tokenReserve)],
             });
-            //await useWaitForTransaction({ hash: approveTx.hash });
             setIsApproving(false);
 
             setIsCreatingPool(true);
@@ -62,11 +66,10 @@ function CreatePool() {
                 args: [tokenAddress, parseEther(tokenReserve)],
                 value: parseEther(ethAmount),
             });
-            //await useWaitForTransaction({ hash: createPoolTx.hash });
             setIsCreatingPool(false);
 
             alert("Pool created successfully!");
-            refetch(); // refresh after creation
+            refetch();
         } catch (error) {
             console.error("Error creating pool:", error);
             setIsApproving(false);
@@ -76,37 +79,106 @@ function CreatePool() {
     };
 
     return (
-        <div>
-            <h2>Create Pool</h2>
-            <input
-                type="text"
-                placeholder="Token Address"
-                value={tokenAddress}
-                onChange={(e) => {
-                    let value = e.target.value;
-                    if (value.startsWith("0x")) {
-                        setTokenAddress(value as `0x${string}`);
-                    }
-                }}
-            />
+        <div className="min-h-screen bg-gradient-to-br from-zinc-900 via-stone-900 to-neutral-900 text-gray-100">
+            <Navbar />
 
-            <input type="text" placeholder="Token Reserve" value={tokenReserve} onChange={(e) => setTokenReserve(e.target.value)} />
-            <input type="text" placeholder="ETH Amount" value={ethAmount} onChange={(e) => setEthAmount(e.target.value)} />
-            <button onClick={handleCreatePool} disabled={isApproving || isCreatingPool}>
-                {isApproving ? "Approving..." : isCreatingPool ? "Creating Pool..." : "Create Pool"}
-            </button>
+            <main className="container mx-auto px-4 py-8">
+                <Card className="bg-zinc-800/50 backdrop-blur-lg border-zinc-700 mb-8">
+                    <CardHeader>
+                        <CardTitle className="text-2xl text-emerald-400">Create New Pool</CardTitle>
+                        <CardDescription className="text-gray-400">
+                            Create a new liquidity pool for token/ETH pair trading
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <Alert className="bg-zinc-900/50 border-emerald-800">
+                            <InfoIcon className="h-4 w-4 text-emerald-400" />
+                            <AlertDescription className="text-gray-300">
+                                Note: This DEX only supports Token/ETH trading pairs. Each token can only have one pool.
+                            </AlertDescription>
+                        </Alert>
 
-            <h2>Available Pools</h2>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
-                {pools?.map((pool: { poolAddress: string; price: bigint; ethReserve: bigint; tokenReserve: bigint; }, index: Key | null | undefined) => (
-                    <div key={index} style={{ border: "1px solid #ccc", padding: "10px", borderRadius: "8px", width: "200px" }}>
-                        <p><strong>pool address:</strong> {pool.poolAddress}</p>
-                        <p><strong>Token Price:</strong> {formatEther(pool.price)} ETH</p>
-                        <p><strong>ETH Reserve:</strong> {formatEther(pool.ethReserve)}</p>
-                        <p><strong>Token Reserve:</strong> {formatEther(pool.tokenReserve)}</p>
-                    </div>
-                ))}
-            </div>
+                        <div className="space-y-2">
+                            <label className="text-sm text-gray-300">Token Address</label>
+                            <Input
+                                type="text"
+                                placeholder="0x..."
+                                value={tokenAddress}
+                                onChange={(e) => {
+                                    let value = e.target.value;
+                                    if (value.startsWith("0x")) {
+                                        setTokenAddress(value as `0x${string}`);
+                                    }
+                                }}
+                                className="bg-zinc-900/50 border-zinc-700 text-gray-200"
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-sm text-gray-300">Token Reserve</label>
+                            <Input
+                                type="text"
+                                placeholder="Token Reserve Amount"
+                                value={tokenReserve}
+                                onChange={(e) => setTokenReserve(e.target.value)}
+                                className="bg-zinc-900/50 border-zinc-700 text-gray-200"
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-sm text-gray-300">ETH Amount</label>
+                            <Input
+                                type="text"
+                                placeholder="ETH Amount"
+                                value={ethAmount}
+                                onChange={(e) => setEthAmount(e.target.value)}
+                                className="bg-zinc-900/50 border-zinc-700 text-gray-200"
+                            />
+                        </div>
+
+                        <Button
+                            onClick={handleCreatePool}
+                            disabled={isApproving || isCreatingPool}
+                            className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
+                        >
+                            {isApproving ? "Approving..." : isCreatingPool ? "Creating Pool..." : "Create Pool"}
+                        </Button>
+                    </CardContent>
+                </Card>
+
+                <div className="space-y-4">
+                    <h2 className="text-2xl font-semibold text-emerald-400 mb-4">Available Pools</h2>
+                    {pools?.map((pool: PoolInfo, index: Key | null | undefined) => (
+                        <Card
+                            key={index}
+                            className="w-full bg-zinc-800/50 backdrop-blur-lg border-zinc-700 hover:border-emerald-500/50 transition-colors"
+                        >
+                            <CardContent className="p-6 space-y-3">
+                                <div className="grid gap-2">
+                                    <div>
+                                        <span className="text-gray-400">Pool Address:</span>
+                                        <p className="text-gray-200 break-all font-mono text-sm">{pool.poolAddress}</p>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
+                                        <div>
+                                            <span className="text-gray-400">Token Price:</span>
+                                            <p className="text-emerald-400 font-semibold">{formatEther(pool.price)} ETH</p>
+                                        </div>
+                                        <div>
+                                            <span className="text-gray-400">ETH Reserve:</span>
+                                            <p className="text-gray-200">{formatEther(pool.ethReserve)} ETH</p>
+                                        </div>
+                                        <div>
+                                            <span className="text-gray-400">Token Reserve:</span>
+                                            <p className="text-gray-200">{formatEther(pool.tokenReserve)} Tokens</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
+            </main>
         </div>
     );
 }
