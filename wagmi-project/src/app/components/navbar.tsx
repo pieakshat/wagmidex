@@ -31,7 +31,7 @@ export function Navbar() {
                     <NavigationMenu>
                         <NavigationMenuList>
                             <NavigationMenuItem>
-                                <NavigationMenuTrigger className="text-gray-200 hover:text-emerald-400">
+                                <NavigationMenuTrigger className="text-gray-200 hover:text-emerald-400 text-gray-500">
                                     Actions
                                 </NavigationMenuTrigger>
                                 <NavigationMenuContent>
@@ -93,7 +93,7 @@ export function Navbar() {
                     </NavigationMenu>
                     <Popover>
                         <PopoverTrigger asChild>
-                            <Button variant="outline" className="border-zinc-700 hover:border-emerald-500/50 text-gray-200 hover:text-emerald-400">
+                            <Button variant="outline" className="border-zinc-700 hover:border-emerald-500/50 text-gray-500 hover:text-emerald-400">
                                 {isConnected ? (
                                     <span>
                                         {address?.slice(0, 6)}...{address?.slice(-4)}

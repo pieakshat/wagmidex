@@ -91,8 +91,8 @@ function CreatePool() {
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <Alert className="bg-zinc-900/50 border-emerald-800">
-                            <InfoIcon className="h-4 w-4 text-emerald-400" />
+                        <Alert className="bg-zinc-900/50 border-emerald-800 py-2 px-3 text-sm">
+                            <InfoIcon className="h-3 w-4 text-gray-300" />
                             <AlertDescription className="text-gray-300">
                                 Note: This DEX only supports Token/ETH trading pairs. Each token can only have one pool.
                             </AlertDescription>
