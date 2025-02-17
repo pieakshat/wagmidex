@@ -1,8 +1,7 @@
 "use client"
-
-import { useState } from "react";
-import { parseEther } from "viem";
-import { useAccount, useWriteContract } from "wagmi";
+import { useState, useEffect } from "react";
+import { parseEther, formatEther } from "viem";
+import { useAccount, useReadContract, useWriteContract, useBalance } from "wagmi";
 import TokenAbi from '../../abis/token.json';
 import DexAbi from '../../abis/dex.json';
 import { DEX_ADDRESS, ALICE_TOKEN_ADDRESS, BOB_TOKEN_ADDRESS } from "../page";
@@ -12,25 +11,40 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Settings, ArrowDown, ChevronDown, InfoIcon } from 'lucide-react';
 
-// Token options type
 type Token = {
     symbol: string;
     address: `0x${string}` | "ETH";
     icon?: string;
 };
 
+type PoolInfo = {
+    poolAddress: string;
+    price: bigint;
+    ethReserve: bigint;
+    tokenReserve: bigint;
+};
+
+
+
 const SwapInterface = () => {
     const { address, isConnected } = useAccount();
     const { writeContractAsync } = useWriteContract();
 
-    // Available tokens
+    const { data: pools } = useReadContract({
+        address: DEX_ADDRESS,
+        abi: DexAbi,
+        functionName: "getAllPoolsInfo",
+        query: {
+            select: (data) => data as PoolInfo[],
+        }
+    });
+
     const tokens: Token[] = [
         { symbol: "ETH", address: "ETH", icon: "🔷" },
         { symbol: "ALICE", address: ALICE_TOKEN_ADDRESS },
         { symbol: "BOB", address: BOB_TOKEN_ADDRESS }
     ];
 
-    // State
     const [selectedToken1, setSelectedToken1] = useState<Token>(tokens[0]);
     const [selectedToken2, setSelectedToken2] = useState<Token>(tokens[1]);
     const [amount1, setAmount1] = useState("");
@@ -39,7 +53,65 @@ const SwapInterface = () => {
     const [showTokenList1, setShowTokenList1] = useState(false);
     const [showTokenList2, setShowTokenList2] = useState(false);
 
-    // Token selection dropdown component
+    // Calculate output amount based on input amount and pool data
+    const calculateOutputAmount = (
+        inputAmount: string,
+        inputToken: Token,
+        outputToken: Token,
+        pools: PoolInfo[] | undefined
+    ) => {
+        if (!pools || !inputAmount || isNaN(Number(inputAmount))) {
+            return "0";
+        }
+
+        const inputAmountBigInt = parseEther(inputAmount);
+
+        // ETH to Token swap
+        if (inputToken.address === "ETH" && outputToken.address !== "ETH") {
+            const pool = pools.find(p => p.poolAddress.toLowerCase() === outputToken.address.toLowerCase());
+            if (!pool) return "0";
+
+            const outputAmount = (inputAmountBigInt * pool.tokenReserve) / (pool.ethReserve + inputAmountBigInt);
+            return formatEther(outputAmount);
+        }
+
+        // Token to ETH swap
+        else if (inputToken.address !== "ETH" && outputToken.address === "ETH") {
+            const pool = pools.find(p => p.poolAddress.toLowerCase() === inputToken.address.toLowerCase());
+            if (!pool) return "0";
+
+            const outputAmount = (inputAmountBigInt * pool.ethReserve) / (pool.tokenReserve + inputAmountBigInt);
+            return formatEther(outputAmount);
+        }
+
+        // Token to Token swap
+        else if (inputToken.address !== "ETH" && outputToken.address !== "ETH") {
+            const inputPool = pools.find(p => p.poolAddress.toLowerCase() === inputToken.address.toLowerCase());
+            const outputPool = pools.find(p => p.poolAddress.toLowerCase() === outputToken.address.toLowerCase());
+
+            if (!inputPool || !outputPool) return "0";
+
+            // First get ETH amount
+            const intermediateEthAmount = (inputAmountBigInt * inputPool.ethReserve) / (inputPool.tokenReserve + inputAmountBigInt);
+            // Then get output token amount
+            const outputAmount = (intermediateEthAmount * outputPool.tokenReserve) / (outputPool.ethReserve + intermediateEthAmount);
+
+            return formatEther(outputAmount);
+        }
+
+        return "0";
+    };
+
+    // Update amount2 whenever amount1 changes
+    useEffect(() => {
+        if (amount1) {
+            const calculatedAmount = calculateOutputAmount(amount1, selectedToken1, selectedToken2, pools);
+            setAmount2(calculatedAmount);
+        } else {
+            setAmount2("");
+        }
+    }, [amount1, selectedToken1, selectedToken2, pools]);
+
     const TokenDropdown = ({ tokens, selectedToken, onSelect, show, setShow }: any) => (
         <div className="relative">
             <button
@@ -153,7 +225,6 @@ const SwapInterface = () => {
                         </Alert>
 
                         <div className="space-y-4">
-                            {/* First Token Input */}
                             <div className="space-y-2">
                                 <div className="flex justify-between text-sm text-gray-400">
                                     <span>You pay</span>
@@ -170,14 +241,19 @@ const SwapInterface = () => {
                                     <TokenDropdown
                                         tokens={tokens}
                                         selectedToken={selectedToken1}
-                                        onSelect={setSelectedToken1}
+                                        onSelect={(token: Token) => {
+                                            setSelectedToken1(token);
+                                            if (amount1) {
+                                                const newAmount = calculateOutputAmount(amount1, token, selectedToken2, pools);
+                                                setAmount2(newAmount);
+                                            }
+                                        }}
                                         show={showTokenList1}
                                         setShow={setShowTokenList1}
                                     />
                                 </div>
                             </div>
 
-                            {/* Swap Direction Button */}
                             <div className="flex justify-center">
                                 <Button
                                     variant="ghost"
@@ -195,7 +271,6 @@ const SwapInterface = () => {
                                 </Button>
                             </div>
 
-                            {/* Second Token Input */}
                             <div className="space-y-2">
                                 <div className="flex justify-between text-sm text-gray-400">
                                     <span>You receive</span>
@@ -205,14 +280,20 @@ const SwapInterface = () => {
                                     <input
                                         type="number"
                                         value={amount2}
-                                        onChange={(e) => setAmount2(e.target.value)}
+                                        readOnly
                                         placeholder="0"
                                         className="bg-transparent w-full focus:outline-none text-gray-200"
                                     />
                                     <TokenDropdown
                                         tokens={tokens}
                                         selectedToken={selectedToken2}
-                                        onSelect={setSelectedToken2}
+                                        onSelect={(token: Token) => {
+                                            setSelectedToken2(token);
+                                            if (amount1) {
+                                                const newAmount = calculateOutputAmount(amount1, selectedToken1, token, pools);
+                                                setAmount2(newAmount);
+                                            }
+                                        }}
                                         show={showTokenList2}
                                         setShow={setShowTokenList2}
                                     />
@@ -222,7 +303,7 @@ const SwapInterface = () => {
 
                         <Button
                             onClick={handleSwap}
-                            disabled={!isConnected || isLoading}
+                            disabled={!isConnected || isLoading || !amount1 || !amount2}
                             className="w-full bg-emerald-600 hover:bg-emerald-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {isLoading ? "Swapping..." : !isConnected ? "Connect Wallet" : "Swap"}

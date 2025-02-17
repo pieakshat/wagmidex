@@ -13,7 +13,7 @@ import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/com
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { InfoIcon } from "lucide-react";
 
-interface PoolInfo {
+export interface PoolInfo {
     poolAddress: string;
     price: bigint;
     ethReserve: bigint;

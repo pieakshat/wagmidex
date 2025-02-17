@@ -12,6 +12,6 @@ async function getPoolInfo() {
 }
 
 getPoolInfo().catch((error) => {
-    console.error(error);
+    console.error(error); s
     process.exitCode = 1;
 }); 
