@@ -2,6 +2,8 @@
 
 import { Navbar } from "./components/navbar"
 import { Button } from "../components/ui/button"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { AlertCircle } from "lucide-react"
 import Link from "next/link"
 
 export default function Home() {
@@ -10,13 +12,19 @@ export default function Home() {
       <Navbar />
 
       <main className="container mx-auto px-4 py-16">
+
         <h1 className="text-5xl font-bold mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-teal-400">
           Welcome to Swaps
         </h1>
         <p className="text-xl mb-12 text-center max-w-2xl mx-auto text-gray-300">
           Create your tokens or mint some test tokens, make liquidity pools with eth then swap and have fun!
         </p>
-
+        <Alert variant="default" className="mb-6 h-3 bg-zinc-900/50 border-none">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription className="text-gray-300">
+            Please ensure your wallet is connected to the Base Sepolia network.
+          </AlertDescription>
+        </Alert>
         <div className="grid md:grid-cols-3 gap-8 mb-16">
           <div className="bg-zinc-800/50 backdrop-blur-lg rounded-lg p-6 border border-zinc-700 hover:border-emerald-500/50 transition-colors">
             <h2 className="text-2xl font-semibold mb-4 text-emerald-400">Mint Tokens</h2>
