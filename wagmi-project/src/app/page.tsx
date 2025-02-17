@@ -28,7 +28,7 @@ export default function Home() {
 
           <div className="bg-zinc-800/50 backdrop-blur-lg rounded-lg p-6 border border-zinc-700 hover:border-emerald-500/50 transition-colors">
             <h2 className="text-2xl font-semibold mb-4 text-emerald-400">Create Pool</h2>
-            <p className="mb-4 text-gray-300">Set up liquidity pools for various token pairs and earn fees.</p>
+            <p className="mb-4 text-gray-300">Set up liquidity pools for token/ETH pairs and swap them</p>
             <Button className="bg-emerald-600 hover:bg-emerald-700" asChild>
               <Link href="/createPool">Create Now</Link>
             </Button>
@@ -36,7 +36,7 @@ export default function Home() {
 
           <div className="bg-zinc-800/50 backdrop-blur-lg rounded-lg p-6 border border-zinc-700 hover:border-emerald-500/50 transition-colors">
             <h2 className="text-2xl font-semibold mb-4 text-emerald-400">Create Token</h2>
-            <p className="mb-4 text-gray-300">Launch your own token with customizable parameters and features.</p>
+            <p className="mb-4 text-gray-300">Launch your own token with customizable name and symbol.</p>
             <Button className="bg-emerald-600 hover:bg-emerald-700" asChild>
               <Link href="/createToken">Launch Token</Link>
             </Button>
