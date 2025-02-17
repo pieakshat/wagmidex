@@ -24,7 +24,7 @@ export function Navbar() {
         <nav className="bg-zinc-900/80 backdrop-blur-lg border-b border-zinc-800">
             <div className="container mx-auto px-4 py-4 flex justify-between items-center">
                 <Link href="/" className="text-2xl font-bold text-emerald-400">
-                    DEXchange
+                    Swaps
                 </Link>
 
                 {/* Desktop Navigation */}
