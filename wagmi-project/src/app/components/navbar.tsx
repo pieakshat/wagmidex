@@ -5,15 +5,7 @@ import Link from "next/link"
 import { useAccount, useConnect, useDisconnect } from "wagmi"
 import { Button } from "@/components/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import {
-    NavigationMenu,
-    NavigationMenuContent,
-    NavigationMenuItem,
-    NavigationMenuLink,
-    NavigationMenuList,
-    NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu"
-import { ChevronDown, Wallet } from "lucide-react"
+import { Wallet } from "lucide-react"
 
 export function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -21,76 +13,36 @@ export function Navbar() {
     const { connectors, connect } = useConnect()
     const { disconnect } = useDisconnect()
 
+    const navLinks = [
+        { href: "/swap", label: "Swap" },
+        { href: "/mintToken", label: "Mint Tokens" },
+        { href: "/createPool", label: "Create Pool" },
+        { href: "/createToken", label: "Create Token" },
+    ]
+
     return (
         <nav className="bg-zinc-900/80 backdrop-blur-lg border-b border-zinc-800">
             <div className="container mx-auto px-4 py-4 flex justify-between items-center">
                 <Link href="/" className="text-2xl font-bold text-emerald-400">
                     DEXchange
                 </Link>
-                <div className="hidden md:flex space-x-4 items-center">
-                    <NavigationMenu>
-                        <NavigationMenuList>
-                            <NavigationMenuItem>
-                                <NavigationMenuTrigger className="text-gray-200 hover:text-emerald-400 text-gray-500">
-                                    Actions
-                                </NavigationMenuTrigger>
-                                <NavigationMenuContent>
-                                    <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr] bg-zinc-900 border border-zinc-800">
-                                        <li className="row-span-3">
-                                            <NavigationMenuLink asChild>
-                                                <a
-                                                    className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-emerald-600 to-teal-800 p-6 no-underline outline-none focus:shadow-md"
-                                                    href="/"
-                                                >
-                                                    <div className="mb-2 mt-4 text-lg font-medium text-gray-100">DEXchange</div>
-                                                    <p className="text-sm leading-tight text-gray-200">Your gateway to decentralized trading</p>
-                                                </a>
-                                            </NavigationMenuLink>
-                                        </li>
-                                        <li>
-                                            <NavigationMenuLink asChild>
-                                                <Link
-                                                    href="/mintToken"
-                                                    className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-zinc-800 hover:text-emerald-400"
-                                                >
-                                                    <div className="text-sm font-medium leading-none">Mint Tokens</div>
-                                                    <p className="line-clamp-2 text-sm leading-snug text-gray-400">
-                                                        Create new tokens for trading on our platform
-                                                    </p>
-                                                </Link>
-                                            </NavigationMenuLink>
-                                        </li>
-                                        <li>
-                                            <NavigationMenuLink asChild>
-                                                <Link
-                                                    href="/createPool"
-                                                    className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-zinc-800 hover:text-emerald-400"
-                                                >
-                                                    <div className="text-sm font-medium leading-none">Create Pool</div>
-                                                    <p className="line-clamp-2 text-sm leading-snug text-gray-400">
-                                                        Set up new liquidity pools for token pairs
-                                                    </p>
-                                                </Link>
-                                            </NavigationMenuLink>
-                                        </li>
-                                        <li>
-                                            <NavigationMenuLink asChild>
-                                                <Link
-                                                    href="/createToken"
-                                                    className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-zinc-800 hover:text-emerald-400"
-                                                >
-                                                    <div className="text-sm font-medium leading-none">Create Token</div>
-                                                    <p className="line-clamp-2 text-sm leading-snug text-gray-400">
-                                                        Launch your own custom token on our DEX
-                                                    </p>
-                                                </Link>
-                                            </NavigationMenuLink>
-                                        </li>
-                                    </ul>
-                                </NavigationMenuContent>
-                            </NavigationMenuItem>
-                        </NavigationMenuList>
-                    </NavigationMenu>
+
+                {/* Desktop Navigation */}
+                <div className="hidden md:flex items-center space-x-6">
+                    {/* Navigation Links */}
+                    <div className="flex space-x-6">
+                        {navLinks.map((link) => (
+                            <Link
+                                key={link.href}
+                                href={link.href}
+                                className="text-gray-200 hover:text-emerald-400 transition-colors"
+                            >
+                                {link.label}
+                            </Link>
+                        ))}
+                    </div>
+
+                    {/* Wallet Connection */}
                     <Popover>
                         <PopoverTrigger asChild>
                             <Button variant="outline" className="border-zinc-700 hover:border-emerald-500/50 text-gray-500 hover:text-emerald-400">
@@ -116,7 +68,7 @@ export function Navbar() {
                                     <Button
                                         key={connector.id}
                                         onClick={() => connect({ connector })}
-                                        className="w-full mb-2 bg-emerald-600 hover:bg-emerald-700"
+                                        className="w-full mb-2 last:mb-0 bg-emerald-600 hover:bg-emerald-700"
                                     >
                                         {connector.name}
                                     </Button>
@@ -125,26 +77,52 @@ export function Navbar() {
                         </PopoverContent>
                     </Popover>
                 </div>
+
+                {/* Mobile Menu Button */}
                 <Button
                     variant="outline"
                     size="icon"
                     className="md:hidden border-zinc-700 hover:border-emerald-500/50 text-gray-200 hover:text-emerald-400"
                     onClick={() => setIsMenuOpen(!isMenuOpen)}
                 >
-                    <ChevronDown className={`h-4 w-4 transition-transform ${isMenuOpen ? "rotate-180" : ""}`} />
+                    <svg
+                        className="h-6 w-6"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        {isMenuOpen ? (
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M6 18L18 6M6 6l12 12"
+                            />
+                        ) : (
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M4 6h16M4 12h16M4 18h16"
+                            />
+                        )}
+                    </svg>
                 </Button>
             </div>
+
+            {/* Mobile Menu */}
             {isMenuOpen && (
                 <div className="md:hidden px-4 py-2 space-y-2 border-t border-zinc-800">
-                    <Link href="/mintToken" className="block py-2 text-gray-200 hover:text-emerald-400">
-                        Mint Tokens
-                    </Link>
-                    <Link href="/createPool" className="block py-2 text-gray-200 hover:text-emerald-400">
-                        Create Pool
-                    </Link>
-                    <Link href="/createToken" className="block py-2 text-gray-200 hover:text-emerald-400">
-                        Create Token
-                    </Link>
+                    {navLinks.map((link) => (
+                        <Link
+                            key={link.href}
+                            href={link.href}
+                            className="block py-2 text-gray-200 hover:text-emerald-400"
+                            onClick={() => setIsMenuOpen(false)}
+                        >
+                            {link.label}
+                        </Link>
+                    ))}
                     <Popover>
                         <PopoverTrigger asChild>
                             <Button variant="outline" className="w-full border-zinc-700 hover:border-emerald-500/50 text-gray-200 hover:text-emerald-400">
@@ -170,7 +148,7 @@ export function Navbar() {
                                     <Button
                                         key={connector.id}
                                         onClick={() => connect({ connector })}
-                                        className="w-full mb-2 bg-emerald-600 hover:bg-emerald-700"
+                                        className="w-full mb-2 last:mb-0 bg-emerald-600 hover:bg-emerald-700"
                                     >
                                         {connector.name}
                                     </Button>

@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { InfoIcon, ExternalLink } from "lucide-react";
 
-const TOKEN_FACTORY_ADDRESS = "0x109B6037847495675712Bd6aA8bF139E3a8e2338";
+const TOKEN_FACTORY_ADDRESS = "0xc0e2D540523BA2D02dFcce0b5E8A40428BbAd9C1";
 
 function CreateToken() {
     const { address, isConnected } = useAccount();
@@ -114,7 +114,7 @@ function CreateToken() {
                                         <AlertDescription className="text-gray-300 flex items-center gap-2">
                                             Transaction pending:{" "}
                                             <a
-                                                href={`https://sepolia.etherscan.io/tx/${txHash}`}
+                                                href={`https://base-sepolia.blockscout.com/tx/${txHash}`}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="text-emerald-400 hover:text-emerald-300 flex items-center gap-1"
@@ -131,7 +131,7 @@ function CreateToken() {
                                         <AlertDescription className="text-gray-300 flex items-center gap-2">
                                             Token deployed at:{" "}
                                             <a
-                                                href={`https://sepolia.etherscan.io/address/${deployedTokenAddress}`}
+                                                href={`https://base-sepolia.blockscout.com/tx/${deployedTokenAddress}`}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="text-emerald-400 hover:text-emerald-300 flex items-center gap-1"

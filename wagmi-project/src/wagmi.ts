@@ -2,24 +2,39 @@ import { http, cookieStorage, createConfig, createStorage } from 'wagmi'
 import { mainnet, sepolia } from 'wagmi/chains'
 import { coinbaseWallet, injected, walletConnect } from 'wagmi/connectors'
 
-// Define Ganache as a custom chain manually
+const baseSepolia = {
+  id: 84532,
+  name: 'Base Sepolia',
+  network: 'base-sepolia',
+  nativeCurrency: { name: 'Ethereum', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: [process.env.NEXT_PUBLIC_BASE_SEPOLIA_RPC_URL || 'https://sepolia.base.org'],
+    },
+  },
+  blockExplorers: {
+    default: { name: 'BaseScan', url: 'https://sepolia.basescan.org' },
+  },
+}
+
 const ganache = {
-  id: 5777, // Default chain ID for Ganache
+  id: 5777,
   name: 'Ganache',
   network: 'ganache',
   nativeCurrency: { name: 'Ethereum', symbol: 'ETH', decimals: 18 },
   rpcUrls: {
-    default: { http: ['http://127.0.0.1:7545'] },
+    default: {
+      http: ['http://127.0.0.1:7545'],
+    },
   },
 }
 
 export function getConfig() {
   return createConfig({
-    chains: [ganache], // Add Ganache to the chains list
+    chains: [mainnet, sepolia, baseSepolia, ganache], // Add all chains
     connectors: [
       injected(),
       coinbaseWallet(),
-      // walletConnect({ projectId: process.env.NEXT_PUBLIC_WC_PROJECT_ID }),
     ],
     storage: createStorage({
       storage: cookieStorage,
@@ -28,7 +43,8 @@ export function getConfig() {
     transports: {
       [mainnet.id]: http(),
       [sepolia.id]: http(),
-      [ganache.id]: http('http://127.0.0.1:7545'), // Connect to local Ganache
+      [baseSepolia.id]: http(process.env.NEXT_PUBLIC_BASE_SEPOLIA_RPC_URL || 'https://sepolia.base.org'),
+      [ganache.id]: http('http://127.0.0.1:7545'),
     },
   })
 }

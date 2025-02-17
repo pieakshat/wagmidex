@@ -11,11 +11,10 @@ export default function Home() {
 
       <main className="container mx-auto px-4 py-16">
         <h1 className="text-5xl font-bold mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-teal-400">
-          Welcome to DEXchange
+          Welcome to Swaps
         </h1>
         <p className="text-xl mb-12 text-center max-w-2xl mx-auto text-gray-300">
-          Experience the future of decentralized trading with our cutting-edge platform. Swap, provide liquidity, and
-          earn rewards with ease and security.
+          Create your tokens or mint some test tokens, make liquidity pools with eth then swap and have fun!
         </p>
 
         <div className="grid md:grid-cols-3 gap-8 mb-16">
@@ -47,8 +46,8 @@ export default function Home() {
         <div className="text-center">
           <h2 className="text-3xl font-semibold mb-4 text-emerald-400">Ready to dive in?</h2>
           <Button size="lg" className="bg-emerald-600 hover:bg-emerald-700" asChild>
-            <Link href="#" className="text-lg">
-              Start Trading Now
+            <Link href="/swap" className="text-lg">
+              Start Swapping Now
             </Link>
           </Button>
         </div>
