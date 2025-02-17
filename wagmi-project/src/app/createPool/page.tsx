@@ -5,7 +5,7 @@ import { parseEther, formatEther } from "viem";
 import { useAccount, useWriteContract, useReadContract } from "wagmi";
 import TokenABI from "../../abis/token.json";
 import DexABI from "../../abis/dex.json";
-import { DEX_ADDRESS } from "../page";
+import { DEX_ADDRESS } from "../../constants";
 import { Navbar } from "../components/navbar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";

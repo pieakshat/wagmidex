@@ -4,7 +4,7 @@ import { parseEther, formatEther } from "viem";
 import { useAccount, useReadContract, useWriteContract, useBalance } from "wagmi";
 import TokenAbi from '../../abis/token.json';
 import DexAbi from '../../abis/dex.json';
-import { DEX_ADDRESS, ALICE_TOKEN_ADDRESS, BOB_TOKEN_ADDRESS } from "../page";
+import { DEX_ADDRESS, ALICE_TOKEN_ADDRESS, BOB_TOKEN_ADDRESS } from "../../constants";
 import { Navbar } from "../components/navbar";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";

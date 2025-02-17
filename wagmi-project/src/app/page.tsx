@@ -4,10 +4,6 @@ import { Navbar } from "./components/navbar"
 import { Button } from "../components/ui/button"
 import Link from "next/link"
 
-export const DEX_ADDRESS = "0x80504fb095c623f0d33FE246c9D5f0c7Df6f1807"
-export const ALICE_TOKEN_ADDRESS = "0x501d826490c6E34Abf4cde1Ac6E1091FdA8A8Cce"
-export const BOB_TOKEN_ADDRESS = "0x15B956FA3948C9e0ac232d917CdB6F4BcDbd1dF1"
-
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-zinc-900 via-stone-900 to-neutral-900 text-gray-100">

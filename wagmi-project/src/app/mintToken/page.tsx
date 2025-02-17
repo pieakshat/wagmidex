@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useAccount, useWriteContract } from "wagmi";
 import MintTokenAbi from '../../abis/token.json';
-import { ALICE_TOKEN_ADDRESS, BOB_TOKEN_ADDRESS } from "../page";
+import { ALICE_TOKEN_ADDRESS, BOB_TOKEN_ADDRESS } from "../../constants";
 import { Navbar } from "../components/navbar";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
